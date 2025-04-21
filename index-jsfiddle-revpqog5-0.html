@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JSFiddle revpqog5</title>
+
+  <style>
+    
+  </style>
+
+  
+</head>
+<body>
+  <!DOCTYPE html>
+<html lang="he">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>טיקטוק עולמי - הכל בא יחד</title>
+<!-- סגנון עיצוב בסיסי -->
+<style>
+  body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    color: #fff;
+    padding: 20px;
+  }
+  h1 {
+    text-align: center;
+  }
+  #עלאה {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 600px;
+    margin: 0 auto 20px auto;
+    text-align: center;
+  }
+  #קובץוידאו {
+    display: none;
+  }
+  #בחרקובץ {
+    background-color: #ffd700;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  #פיד {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .card {
+    background-color: rgba(255,255,255,0.1);
+    border-radius: 20px;
+    margin: 10px;
+    width: 350px;
+    overflow: hidden;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+  }
+  video {
+    width: 100%;
+    height: auto;
+  }
+  .actions {
+    display: flex;
+    justify-content: space-around;
+    padding: 10px;
+  }
+  button {
+    background-color: #ffd700;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  button:hover {
+    background-color: #ffa500;
+  }
+</style>
+</head>
+<body>
+
+<h1>טיקטוק 🌎✨</h1>
+<p style="text-align:center;">שיתוף, יצירתיות, והנאה בלי גבולות</p>
+
+<div style="text-align:center;">
+  <button onclick="פתחטופס()">העלה את הוידאו שלך</button>
+</div>
+
+<!-- טופס העלאה -->
+<div id="טופס-העלאה" style="display:none; text-align:center; margin-top:20px;">
+  <input type="file" id="קובץוידאו" accept="video/*" onchange="הצגוידאו()" />
+  <label for="קובץוידאו" id="בחרקובץ">בחר קובץ</label>
+  <br/><br/>
+  <input type="text" id="כותרת" placeholder="כתוב כותרת לפוסט" style="width:80%; padding:8px; border-radius:5px; border:none;"/>
+  <br/><br/>
+  <button onclick="פרסםפוסט()">פרסם</button>
+</div>
+
+<!-- אזור הפיד -->
+<div id="פיד"></div>
+
+<!-- JavaScript -->
+<script>
+  const הפוסטים = [];
+
+  function פתחטופס() {
+    document.getElementById('טופס-העלאה').style.display = 'block';
+  }
+
+  let הוידאוURL = '';
+
+  function הצגוידאו() {
+    const קובץ = document.getElementById('קובץוידאו').files[0];
+    if (!קובץ) {
+      alert('אנא בחר קובץ!');
+      return;
+    }
+    הוידאוURL = URL.createObjectURL(קובץ);
+  }
+
+  function פרסםפוסט() {
+    const כותרת = document.getElementById('כותרת').value.trim();
+    if (!הוידאוURL) {
+      alert('אנא בחר קובץ ווידאו!');
+      return;
+    }
+    if (כותרת === '') {
+      alert('אנא כתוב כותרת לפוסט!');
+      return;
+    }
+    הפוסטים.unshift({
+      id: Date.now(),
+      וידאו: הוידאוURL,
+      כותרת: כותרת,
+      לייקים: 0,
+      תגובות: []
+    });
+    הצגפוסטים();
+    // איפוס הטופס  
+    document.getElementById('כותרת').value = '';
+    document.getElementById('קובץוידאו').value = '';
+    הוידאוURL = '';
+    document.getElementById('טופס-העלאה').style.display = 'none';
+  }
+
+  function הצגפוסטים() {
+    const פיד = document.getElementById('פיד');
+    פיד.innerHTML = '';
+    הפוסטים.forEach(פוסט => {
+      const אלמנט = document.createElement('div');
+      אלמנט.className = 'card';
+      אלמנט.innerHTML = `
+        <video src="${פוסט.וידאו}" controls></video>
+        <h3 style="text-align:center; margin:10px;">${פוסט.כותרת}</h3>
+        <div class="actions">
+          <button onclick="אהב(${פוסט.id})">👍 ${פוסט.לייקים}</button>
+          <button onclick="הוסףתגובה(${פוסט.id})">💬 תגובה</button>
+          <button onclick="שיתוף(${פוסט.id})">🔗 שיתוף</button>
+        </div>
+      `;
+      פיד.appendChild(אלמנט);
+    });
+  }
+
+  function אהב(id) {
+    const פוסט = הפוסטים.find(p => p.id === id);
+    if (פוסט) {
+      פוסט.לייקים++;
+      הצגפוסטים();
+    }
+  }
+
+  function הוסףתגובה(id) {
+    const תגובה = prompt('כתוב תגובה:');
+    if (תגובה && תגובה.trim() !== '') {
+      const פוסט = הפוסטים.find(p => p.id === id);
+      if (פוסט) {
+        פוסט.תגובות.push(תגובה);
+        alert('תודה על התגובה!');
+        // אפשר להוסיף פה הצגת תגובות מתקדמת  
+      }
+    }
+  }
+
+  function שיתוף(id) {
+    alert('קישור לשיתוף: ' + window.location.href + '?post=' + id);
+  }
+</script>
+
+</body>
+</html>
+
+
+  <script>
+    
+  </script>
+</body>
+</html>
